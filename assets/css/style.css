@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 0.8rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--success);
+  border-radius: 4px;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fafafa;
+}
+
+.section {
+  min-height: 100vh;
+}
+
+.heading {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav {
+    gap: 1rem;
+  }
+}
