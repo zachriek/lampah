@@ -22,6 +22,10 @@ body {
   min-height: 100vh;
 }
 
+.mt-100 {
+  margin-top: 100px;
+}
+
 .heading {
   color: var(--success);
   font-weight: 600;
@@ -32,4 +36,20 @@ body {
   .navbar-nav {
     gap: 1rem;
   }
+}
+
+.page-link {
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.page-item.active .page-link {
+  background-color: var(--success);
+  border-color: var(--success);
+}
+
+.page-link:focus,
+.page-link:hover {
+  color: #fff;
+  background-color: var(--success);
 }

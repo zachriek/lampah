@@ -32,7 +32,7 @@
                 :class="`nav-link ${
                   this.$route.path === '/laporan' ? 'active' : ''
                 }`"
-                to="#"
+                to="/laporan"
               >
                 <b-icon-file-earmark-text-fill />
                 <span>Laporan</span>
