@@ -13,10 +13,13 @@
               untuk melaporkan tempat-tempat yang tercemar oleh sampah atau
               limbah.
             </p>
-            <NuxtLink to="/" class="btn btn-success shadow-sm">
-              <b-icon-arrow-right />
-              <span>Lapor Sampah</span>
-            </NuxtLink>
+            <AppButton
+              type="link"
+              text="Lapor Sampah"
+              href="/laporan"
+              variant="success"
+              icon="arrow-right"
+            />
           </div>
         </div>
       </div>
