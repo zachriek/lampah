@@ -39,6 +39,17 @@
               </NuxtLink>
             </li>
             <li class="nav-item">
+              <NuxtLink
+                :class="`nav-link ${
+                  this.$route.path.includes('/artikel') ? 'active' : ''
+                }`"
+                to="/artikel"
+              >
+                <b-icon-newspaper />
+                <span>Artikel</span>
+              </NuxtLink>
+            </li>
+            <li class="nav-item">
               <NuxtLink class="nav-link" to="#">
                 <b-icon-person-fill />
                 <span>Profil</span>
