@@ -50,6 +50,7 @@ export default {
     '@nuxtjs/pwa',
     'vue-sweetalert2/nuxt',
     '@nuxtjs/auth',
+    'cookie-universal-nuxt',
   ],
 
   sweetalert: {
