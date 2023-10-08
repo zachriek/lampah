@@ -37,9 +37,13 @@
 import authImagePath from '~/assets/images/auth.jpg'
 export default {
   middleware: 'guest',
-  auth: 'guest',
   data() {
     return { authImagePath }
+  },
+  mounted() {
+    if (this.$auth.loggedIn) {
+      return this.$route.push('/')
+    }
   },
 }
 </script>
