@@ -37,7 +37,7 @@
 import authImagePath from '~/assets/images/auth.jpg'
 export default {
   middleware: 'guest',
-  auth: false,
+  auth: 'guest',
   data() {
     return { authImagePath }
   },
