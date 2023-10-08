@@ -58,6 +58,7 @@
 export default {
   name: 'LoginPage',
   layout: 'auth',
+  middleware: 'guest',
   data() {
     return {
       isSubmitted: false,
@@ -66,6 +67,11 @@ export default {
         username: '',
         password: '',
       },
+    }
+  },
+  mounted() {
+    if (this.$auth.loggedIn) {
+      return this.$route.push('/')
     }
   },
   methods: {

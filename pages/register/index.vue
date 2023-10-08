@@ -113,6 +113,7 @@
 export default {
   name: 'RegisterPage',
   layout: 'auth',
+  middleware: 'guest',
   data() {
     return {
       isSubmitted: false,
@@ -124,6 +125,11 @@ export default {
         phone: '',
         password: '',
       },
+    }
+  },
+  mounted() {
+    if (this.$auth.loggedIn) {
+      return this.$route.push('/')
     }
   },
   methods: {
