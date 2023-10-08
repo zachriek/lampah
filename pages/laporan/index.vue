@@ -204,7 +204,7 @@ export default {
   data() {
     return {
       isSubmitted: false,
-      limitBody: 1,
+      limitBody: 30,
       perPage: 3,
       currentPage: 1,
       searchQuery: '',

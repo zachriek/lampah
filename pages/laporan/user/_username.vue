@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       paramUsername: this.$route.params.username,
-      limitBody: 1,
+      limitBody: 30,
       perPage: 3,
       currentPage: 1,
       searchQuery: '',
