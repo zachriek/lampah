@@ -14,7 +14,11 @@
         >
           <ReportCard
             :title="article.title"
-            :body="article.content"
+            :body="
+              article.content.length > limitBody
+                ? article.content.substring(0, limitBody) + '...'
+                : article.content
+            "
             :image="article.img"
             :href="`/artikel/${article.slug}`"
             button-text="Lihat"
@@ -31,6 +35,7 @@ export default {
   name: 'ArtikelPage',
   data() {
     return {
+      limitBody: 30,
       articles: [
         {
           title: 'Judul Artikel 1',
