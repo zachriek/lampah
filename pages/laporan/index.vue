@@ -30,7 +30,7 @@
               v-for="value in [3, 6, 9]"
               :key="value"
               @click="handleChangePerPage(value)"
-              >{{ value }} halaman</b-dropdown-item
+              >{{ value }} laporan</b-dropdown-item
             >
           </b-dropdown>
 
@@ -49,7 +49,9 @@
           </div>
         </div>
       </div>
-      <div class="row">
+
+      <CardSkeletonLoading v-if="isLoading" :count="perPage" />
+      <div v-else class="row">
         <div v-if="reports.length < 1" class="col-12 col-md-6 col-lg-4">
           <div class="alert alert-danger" role="alert">
             Laporan tidak ditemukan!
@@ -60,9 +62,23 @@
           :key="report.id"
           class="col-12 col-md-6 col-lg-4 mb-5"
         >
-          <ReportCard :title="report.title" :body="report.body" />
+          <ReportCard
+            :title="report.title"
+            :author="`${report.author.name} - ${report.author.username}`"
+            :username="report.author.username"
+            :body="
+              report.body.length > limitBody
+                ? report.body.substring(0, limitBody) + '...'
+                : report.body
+            "
+            :image="report.image ?? null"
+            :href="`/laporan/${report.slug}`"
+            button-text="Lihat"
+            button-icon="eye-fill"
+          />
         </div>
       </div>
+
       <div class="row my-5">
         <div class="col-12">
           <b-pagination
@@ -77,7 +93,6 @@
     </div>
 
     <div
-      v-once
       id="laporanModal"
       class="modal fade"
       tabindex="-1"
@@ -97,8 +112,32 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form @submit.prevent="handleSubmit">
+          <form enctype="multipart/form-data" @submit.prevent="handleSubmit">
             <div class="modal-body">
+              <img
+                ref="postImage"
+                src=""
+                class="img-thumbnail mb-3"
+                width="200"
+                loading="lazy"
+              />
+              <div class="custom-file mb-3">
+                <label
+                  ref="postImageLabel"
+                  class="custom-file-label"
+                  for="image"
+                >
+                  Pilih file gambar...
+                </label>
+                <input
+                  id="image"
+                  ref="postImageInput"
+                  type="file"
+                  name="image"
+                  class="custom-file-input"
+                  @change="handleChangeImageInput"
+                />
+              </div>
               <div class="form-group">
                 <label for="title">Judul Laporan</label>
                 <input
@@ -107,8 +146,16 @@
                   type="text"
                   name="title"
                   placeholder="Judul Laporan"
-                  class="form-control"
+                  :class="`form-control ${
+                    isSubmitted && form.title === '' ? 'is-invalid' : ''
+                  }`"
                 />
+                <div
+                  v-if="isSubmitted && form.title === ''"
+                  class="invalid-feedback"
+                >
+                  Judul laporan tidak valid!
+                </div>
               </div>
               <div class="form-group">
                 <label for="body">Isi Laporan</label>
@@ -117,9 +164,17 @@
                   v-model="form.body"
                   name="body"
                   placeholder="Isi Laporan"
-                  class="form-control"
+                  :class="`form-control ${
+                    isSubmitted && form.body === '' ? 'is-invalid' : ''
+                  }`"
                   rows="10"
                 ></textarea>
+                <div
+                  v-if="isSubmitted && form.body === ''"
+                  class="invalid-feedback"
+                >
+                  Isi laporan tidak valid!
+                </div>
               </div>
             </div>
             <div class="modal-footer">
@@ -148,75 +203,19 @@ export default {
   name: 'LaporanPage',
   data() {
     return {
+      isSubmitted: false,
+      limitBody: 1,
       perPage: 3,
       currentPage: 1,
       searchQuery: '',
+      image: '',
       form: {
         title: '',
         body: '',
+        image: '',
       },
-      reportsData: [
-        {
-          id: 1,
-          title: 'Title 1',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 2,
-          title: 'Title 2',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 3,
-          title: 'Title 3',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 4,
-          title: 'Title 4',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 5,
-          title: 'Title 5',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 6,
-          title: 'Title 6',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 7,
-          title: 'Title 7',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 8,
-          title: 'Title 8',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 9,
-          title: 'Title 9',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 10,
-          title: 'Title 10',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 11,
-          title: 'Title 11',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-        {
-          id: 12,
-          title: 'Title 12',
-          body: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis delectus officia adipisci distinctio dolores fugiat aut repellat exercitationem a natus minus ipsam, quibusdam quisquam tempore libero doloribus beatae autem assumenda?',
-        },
-      ],
+      reportsData: [],
+      isLoading: true,
     }
   },
   computed: {
@@ -247,14 +246,40 @@ export default {
       return this.filteredReports.length
     },
   },
+  async mounted() {
+    await this.fetchReports()
+  },
   methods: {
+    async fetchReports() {
+      this.isLoading = true
+      const response = await this.$axios.get('/posts')
+      const { data } = await response.data
+      if (data) {
+        this.isLoading = false
+        this.reportsData = data
+      }
+    },
+    handleChangeImageInput() {
+      this.form.image = this.$refs.postImageInput.files[0] ?? null
+      if (!this.form.image) {
+        this.form.image = this.image
+      }
+
+      if (this.form.image) {
+        this.image = this.form.image
+        this.$refs.postImage.src = URL.createObjectURL(this.form.image)
+        this.$refs.postImageLabel.textContent = this.form.image.name
+      }
+    },
     handleChangePerPage(value) {
       this.perPage = value
     },
     handleCheckForm() {
       return this.form.title && this.form.body
     },
-    handleSubmit() {
+    async handleSubmit() {
+      this.isSubmitted = true
+
       if (!this.handleCheckForm()) {
         return this.$swal.fire({
           icon: 'error',
@@ -262,16 +287,54 @@ export default {
           text: 'Gagal membuat laporan baru!',
         })
       }
-      this.reportsData.push({
-        id: Date.now(),
-        title: this.form.title,
-        body: this.form.body,
-      })
+
       this.$swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: 'Berhasil membuat laporan baru!',
+        title: 'Loading...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          this.$swal.showLoading()
+        },
       })
+
+      try {
+        const { title, body, image } = this.form
+        const data = new FormData()
+        data.append('title', title)
+        data.append('body', body)
+        if (image) {
+          data.append('image', image)
+        }
+
+        const response = await this.$axios.post('/posts', data, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        const { message } = await response.data
+
+        if (response.status === 200) {
+          this.$swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: message,
+          })
+          this.form.title = ''
+          this.form.body = ''
+          this.form.image = null
+          this.$refs.postImage.src = ''
+          this.$refs.postImageLabel.textContent = 'Pilih file gambar...'
+          this.isSubmitted = false
+          await this.fetchReports()
+        }
+      } catch (err) {
+        this.$swal.fire({
+          icon: 'error',
+          title: 'Gagal',
+          text: 'Gagal membuat laporan baru!',
+        })
+      }
     },
   },
 }

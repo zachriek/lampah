@@ -49,6 +49,7 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     'vue-sweetalert2/nuxt',
+    '@nuxtjs/auth',
   ],
 
   sweetalert: {
@@ -75,4 +76,20 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/auth/login',
+            method: 'post',
+            propertyName: 'data.token',
+          },
+          user: { url: '/auth/me', method: 'get', propertyName: 'data' },
+          logout: false,
+        },
+      },
+    },
+  },
 }

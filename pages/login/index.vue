@@ -1,7 +1,7 @@
 <template>
   <form class="mt-5" @submit.prevent="handleSubmit">
-    <h4 class="card-title mb-1">Welcome Back</h4>
-    <p class="card-text text-muted mb-4">Please login to your account</p>
+    <h4 class="card-title mb-1">Selamat Datang</h4>
+    <p class="card-text text-muted mb-4">Masuk ke akun kamu</p>
 
     <b-alert :show="errorMessage !== ''" variant="danger">
       {{ errorMessage }}
@@ -44,18 +44,19 @@
     <div class="text-center mt-4">
       <AppButton
         type="submit"
-        text="Login"
+        text="Masuk"
         variant="success"
         icon="box-arrow-in-right"
         class="btn-block mb-3"
       />
-      <a class="text-success" href="#!">Don't have an account?</a>
+      <NuxtLink class="text-success" to="/register">Belum punya akun?</NuxtLink>
     </div>
   </form>
 </template>
 
 <script>
 export default {
+  name: 'LoginPage',
   layout: 'auth',
   data() {
     return {
@@ -73,28 +74,40 @@ export default {
     },
     async handleSubmit() {
       this.isSubmitted = true
+
       if (!this.handleCheckForm()) {
         this.errorMessage = 'Username dan password tidak boleh kosong!'
         return
       }
-      try {
-        const { username, password } = this.form
-        const response = await this.$axios.post('/auth/login', {
-          username,
-          password,
-        })
-        const { message } = await response.data
 
-        if (response.status === 200) {
-          this.errorMessage = ''
-          this.$swal.fire({
-            icon: 'success',
-            title: 'Berhasil',
-            text: message,
-          })
-        }
+      this.$swal.fire({
+        title: 'Loading...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          this.$swal.showLoading()
+        },
+      })
+
+      try {
+        this.errorMessage = ''
+        const { username, password } = this.form
+        await this.$auth.loginWith('local', {
+          data: { username, password },
+        })
+        this.$swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: 'Berhasil masuk!',
+        })
+        this.$router.push('/')
       } catch (err) {
-        console.log(err)
+        this.$swal.fire({
+          icon: 'error',
+          title: 'Gagal',
+          text: 'Username atau password tidak sesuai!',
+        })
       }
     },
   },

@@ -30,7 +30,7 @@
             <li class="nav-item">
               <NuxtLink
                 :class="`nav-link ${
-                  this.$route.path === '/laporan' ? 'active' : ''
+                  this.$route.path.includes('/laporan') ? 'active' : ''
                 }`"
                 to="/laporan"
               >
@@ -49,10 +49,31 @@
                 <span>Artikel</span>
               </NuxtLink>
             </li>
-            <li class="nav-item">
-              <NuxtLink class="nav-link" to="#">
-                <b-icon-person-fill />
-                <span>Profil</span>
+          </ul>
+          <ul class="navbar-nav ml-md-auto mt-3 mt-md-0">
+            <template v-if="isAuthenticated">
+              <li class="nav-item">
+                <NuxtLink
+                  :class="`nav-link ${
+                    this.$route.path === '/profil' ? 'active' : ''
+                  }`"
+                  to="/profil"
+                >
+                  <b-icon-person-fill />
+                  <span>{{ loggedInUser.username }}</span>
+                </NuxtLink>
+              </li>
+              <li class="nav-item">
+                <button class="btn btn-outline-light" @click="logout">
+                  <b-icon-arrow-return-left />
+                  <span>Logout</span>
+                </button>
+              </li>
+            </template>
+            <li v-else class="nav-item">
+              <NuxtLink class="btn btn-outline-light" to="/login">
+                <b-icon-arrow-return-right />
+                <span>Login</span>
               </NuxtLink>
             </li>
           </ul>
@@ -65,5 +86,37 @@
 <script>
 export default {
   name: 'AppHeader',
+  computed: {
+    isAuthenticated() {
+      return this.$auth.loggedIn
+    },
+    loggedInUser() {
+      return this.$auth.user
+    },
+  },
+  methods: {
+    async logout() {
+      const result = await this.$swal.fire({
+        title: 'Apakah kamu yakin?',
+        text: 'Apakah kamu yakin ingin keluar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Keluar',
+        cancelButtonText: 'Batal',
+      })
+
+      if (result.isConfirmed) {
+        await this.$auth.logout()
+
+        this.$swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: 'Berhasil keluar!',
+        })
+
+        this.$router.push('/login')
+      }
+    },
+  },
 }
 </script>

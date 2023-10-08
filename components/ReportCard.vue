@@ -1,12 +1,21 @@
 <template>
   <b-card
     :title="title"
-    :img-src="image"
+    :img-src="image ?? `https://source.unsplash.com/random/600x300/?trash`"
     img-alt="Image"
     img-top
     class="shadow-sm"
   >
-    <b-card-text>
+    <b-card-sub-title>
+      <NuxtLink
+        v-if="username"
+        :to="`/laporan/user/${username}`"
+        style="color: inherit"
+        >{{ author }}</NuxtLink
+      >
+      <template v-else>{{ author }}</template>
+    </b-card-sub-title>
+    <b-card-text class="mt-4">
       {{ body }}
     </b-card-text>
     <AppButton
@@ -27,6 +36,14 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    author: {
+      type: String,
+      default: '',
+    },
+    username: {
+      type: String,
+      default: null,
     },
     body: {
       type: String,

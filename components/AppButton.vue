@@ -2,12 +2,16 @@
   <NuxtLink
     v-if="type === 'link'"
     :to="href"
-    :class="`btn btn-${variant} shadow-sm`"
+    :class="`btn btn-${variant} ${size !== '' ? `btn-${size}` : ''} shadow-sm`"
   >
     <i :class="`bi bi-${icon}`"></i>
     <span>{{ text }}</span>
   </NuxtLink>
-  <button v-else :type="type" :class="`btn btn-${variant} shadow-sm`">
+  <button
+    v-else
+    :type="type"
+    :class="`btn btn-${variant} ${size !== '' ? `btn-${size}` : ''} shadow-sm`"
+  >
     <i :class="`bi bi-${icon}`"></i>
     <span>{{ text }}</span>
   </button>
@@ -29,7 +33,12 @@ export default {
       type: String,
       default: 'success',
       validator(value) {
-        return ['success', 'outline-success'].includes(value)
+        return [
+          'success',
+          'outline-success',
+          'danger',
+          'outline-danger',
+        ].includes(value)
       },
     },
     icon: {
@@ -42,6 +51,10 @@ export default {
       validator(value) {
         return ['button', 'link', 'submit'].includes(value)
       },
+    },
+    size: {
+      type: String,
+      default: '',
     },
   },
 }
