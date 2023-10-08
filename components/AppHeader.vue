@@ -52,7 +52,7 @@
           </ul>
           <ul class="navbar-nav ml-md-auto mt-3 mt-md-0">
             <template v-if="isAuthenticated">
-              <li class="nav-item">
+              <li class="nav-item mb-2 mb-md-0">
                 <NuxtLink
                   :class="`nav-link ${
                     this.$route.path === '/profil' ? 'active' : ''
